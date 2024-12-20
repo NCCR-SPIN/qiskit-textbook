@@ -154,7 +154,8 @@ def scalable_circuit(func):
 
 
 def gate_demo(gates='full', qsphere=False):
-    from qiskit import QuantumCircuit, execute, Aer
+    from qiskit import QuantumCircuit, transpile
+    from qiskit_aer import Aer
     from qiskit.visualization import plot_bloch_multivector, plot_state_qsphere
     gate_list = []
     showing_p = False
@@ -175,7 +176,9 @@ def gate_demo(gates='full', qsphere=False):
     button_list.append(widgets.Button(description='Reset', layout=widgets.Layout(width='6em', height='3em')))
     image = _img()
     def update_output():
-        out_state = execute(qc,backend).result().get_statevector()
+        trans = transpile(qc, backend)
+        result = backend.run(trans).result()
+        out_state = result.get_statevector()
         if qsphere: 
             image.value = plot_state_qsphere(out_state)
         else:
